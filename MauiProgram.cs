@@ -16,7 +16,7 @@ namespace UdpClientMaui
                 });
 
 #if DEBUG
-		builder.Logging.AddDebug();
+            builder.Logging.AddDebug(); // Ensure you have the correct using directive for Microsoft.Extensions.Logging
 #endif
 
             return builder.Build();

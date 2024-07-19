@@ -1,11 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="UdpClientMaui.MainPage">
-
-    <StackLayout>
-        <Button Text="Send Hello" Clicked="OnSendHelloClicked"/>
-        <Label x:Name="ResponseLabel"/>
+             x:Class="UdpClientMaui.MainPage"
+             BackgroundColor="White">
+    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        <Label Text="Klient wysyłający"
+               VerticalOptions="CenterAndExpand" 
+               HorizontalOptions="CenterAndExpand" />
+        <Button Text="Show Hello World" Clicked="OnShowHelloWorldClicked"/>
+        <Button Text="Send XAML" Clicked="OnSendXamlClicked"/>
+        <Button Text="Show Dialog" Clicked="OnShowDialogClicked"/>
+        <Button Text="Show Error" Clicked="OnShowErrorClicked"/>
+        <Label x:Name="ResponseLabel"
+               VerticalOptions="CenterAndExpand" 
+               HorizontalOptions="CenterAndExpand" />
     </StackLayout>
-
 </ContentPage>

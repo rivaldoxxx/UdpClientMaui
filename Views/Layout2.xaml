@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UdpClientMaui.Layout2">
+    <StackLayout x:Name="LayoutStack">
+        <Label x:Name="Worker1" StyleId="Worker1" Text="Worker1: READY" TextColor="Yellow"/>
+        <Label x:Name="PickLeft" StyleId="PickLeft" Text="Pozostało: (5/10)"/>
+        <Label x:Name="Status" StyleId="Status" Text="Nowy Status" TextColor="Green"/>
+        <Label x:Name="Details" StyleId="Details" Text="Nowe Szczegóły" TextColor="Blue"/>
+        <Button Text="Back" Clicked="OnBackButtonClicked"/>
+    </StackLayout>
+</ContentPage>
