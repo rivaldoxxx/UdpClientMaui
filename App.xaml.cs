@@ -1,4 +1,6 @@
-﻿namespace UdpClientMaui
+﻿using Microsoft.Maui.Controls;
+
+namespace UdpClientMaui
 {
     public partial class App : Application
     {
@@ -6,7 +8,8 @@
         {
             InitializeComponent();
 
-            MainPage = new AppShell();
+
+            MainPage = new NavigationPage(new LoginPage());
         }
     }
 }

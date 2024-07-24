@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UdpClientMaui.ExampleLayout3">
+    <StackLayout Padding="30">
+        <Label Text="Example Layout 3" 
+               FontSize="24" 
+               HorizontalOptions="Center" />
+        <Image Source="example_image.png" 
+               HorizontalOptions="Center"
+               HeightRequest="200"/>
+        <Button Text="Zamknij" 
+                HorizontalOptions="Center" />
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UdpClientMaui.ScanListPage">
+    <StackLayout Padding="30" Spacing="20">
+        <Label Text="Skanuj listę kompletacji" FontSize="24" HorizontalOptions="Center" />
+
+        <Button Text="Opcja 1: Lista produktów" Clicked="OnOption1Clicked" />
+        <Button Text="Opcja 2: Widok produktu" Clicked="OnOption2Clicked" />
+
+        <!-- Nowe opcje -->
+        <Button Text="Show Hello World" Clicked="OnShowHelloWorldClicked"/>
+        <Button Text="Send XAML" Clicked="OnSendXamlClicked"/>
+        <Button Text="Show Dialog" Clicked="OnShowDialogClicked"/>
+        <Button Text="Show Error" Clicked="OnShowErrorClicked"/>
+
+        <!-- Sekcja plików XAML -->
+        <Label x:Name="XamlFilesLabel" Text="Dostępne pliki XAML" FontSize="18" HorizontalOptions="Center" IsVisible="False" />
+
+        <!-- ListView do wyświetlania plików XAML -->
+        <ListView x:Name="XamlFilesListView" 
+                  IsVisible="False"
+                  ItemSelected="OnXamlFileSelected"
+                  HasUnevenRows="True"
+                  SeparatorVisibility="None">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Padding="10" Spacing="15">
+                            <Image Source="file_icon.png" WidthRequest="24" HeightRequest="24" />
+                            <Label Text="{Binding .}" FontSize="16" VerticalOptions="Center" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

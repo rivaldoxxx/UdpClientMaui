@@ -1,27 +1,31 @@
-ï»¿using System;
+using System;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using UdpClientMaui.Models;
 
 namespace UdpClientMaui
 {
-    public partial class MainPage : ContentPage
+    public partial class ScanListPage : ContentPage
     {
+        private ObservableCollection<string> xamlFiles;
         private UdpClient client;
         private IPEndPoint remoteEP;
 
-        public MainPage()
+        public ScanListPage()
         {
             InitializeComponent();
-            // StartUdpListener();
+            LoadXamlFiles();
+            StartUdpListener();
         }
 
-        /*private void StartUdpListener()
+        private void StartUdpListener()
         {
-            int port = 12000; // Nowy port nasÅ‚uchu klienta
+            int port = 12001;
             client = new UdpClient(new IPEndPoint(IPAddress.Any, port));
             client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
@@ -29,17 +33,16 @@ namespace UdpClientMaui
 
             try
             {
-                Console.WriteLine($"Klient nasÅ‚uchuje na porcie {port}");
+                Console.WriteLine($"Klient nas³uchuje na porcie {port}");
                 ReceiveMessages();
             }
             catch (Exception e)
             {
-                Console.WriteLine("WystÄ…piÅ‚ bÅ‚Ä…d podczas uruchamiania nasÅ‚uchiwania: " + e.ToString());
+                Console.WriteLine("Wyst¹pi³ b³¹d podczas uruchamiania nas³uchiwania: " + e.ToString());
             }
-        }*/
+        }
 
-
-        /*private void ReceiveMessages()
+        private void ReceiveMessages()
         {
             Task.Run(() =>
             {
@@ -47,7 +50,7 @@ namespace UdpClientMaui
                 {
                     while (true)
                     {
-                        Console.WriteLine("Oczekiwanie na wiadomoÅ›Ä‡...");
+                        Console.WriteLine("Oczekiwanie na wiadomoœæ...");
                         var result = client.Receive(ref remoteEP);
                         byte[] receivedBytes = result;
                         string receivedData = Encoding.ASCII.GetString(receivedBytes);
@@ -70,26 +73,40 @@ namespace UdpClientMaui
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("WystÄ…piÅ‚ bÅ‚Ä…d podczas odbierania wiadomoÅ›ci: " + e.ToString());
+                    Console.WriteLine("Wyst¹pi³ b³¹d podczas odbierania wiadomoœci: " + e.ToString());
                 }
             });
-        }*/
+        }
 
         private async void HandleAllProductsConfirmed()
         {
-            await DisplayAlert("Informacja", "Wszystkie produkty zostaÅ‚y potwierdzone.", "OK");
-            await Navigation.PopToRootAsync(); // PowrÃ³t do strony gÅ‚Ã³wnej
+            await Navigation.PushAsync(new ScanListPage()); 
+        }
+
+        private async void OnOption1Clicked(object sender, EventArgs e)
+        {
+            await SendOptionOneMessage();
+
+            await Navigation.PushAsync(new ProductListPage());
+        }
+
+        private async void OnOption2Clicked(object sender, EventArgs e)
+        {
+            var products = new List<Product>
+            {
+                new Product { Name = "Produkt 1", ImageFileName = "produkt1.jpg" },
+                new Product { Name = "Produkt 2", ImageFileName = "produkt2.jpg" },
+                new Product { Name = "Produkt 3", ImageFileName = "produkt3.jpg" },
+                new Product { Name = "Produkt 4", ImageFileName = "produkt4.jpg" },
+                new Product { Name = "Produkt 5", ImageFileName = "produkt5.jpg" }
+            };
+
+            await Navigation.PushAsync(new SingleProductPage(products, 0));
         }
 
         private async void OnShowHelloWorldClicked(object sender, EventArgs e)
         {
             await ShowHelloWorld();
-        }
-
-        private async void OnSendXamlClicked(object sender, EventArgs e)
-        {
-            string filePath = "C:\\Users\\fizyk\\source\\repos\\UdpClientMaui\\ExampleLayout.xaml";
-            await SendXamlFile(filePath);
         }
 
         private async void OnShowDialogClicked(object sender, EventArgs e)
@@ -104,7 +121,7 @@ namespace UdpClientMaui
 
         public async Task ShowHelloWorld()
         {
-            string serverAddress = "127.0.0.1"; // adres IP serwera
+            string serverAddress = "127.0.0.1"; 
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -122,20 +139,52 @@ namespace UdpClientMaui
 
                     await client.SendAsync(messageBytes, messageBytes.Length, serverAddress, serverPort);
 
-                    ResponseLabel.Text = "WysÅ‚ano wiadomoÅ›Ä‡ Hello, World! do serwera";
-                    Console.WriteLine("WysÅ‚ano wiadomoÅ›Ä‡: " + messageJson);
+                    Console.WriteLine("Wys³ano wiadomoœæ: " + messageJson);
                 }
                 catch (Exception ex)
                 {
-                    ResponseLabel.Text = "BÅ‚Ä…d: " + ex.Message;
-                    Console.WriteLine("BÅ‚Ä…d wysyÅ‚ania wiadomoÅ›ci: " + ex.Message);
+                    Console.WriteLine("B³¹d wysy³ania wiadomoœci: " + ex.Message);
                 }
+            }
+        }
+
+        private void LoadXamlFiles()
+        {
+            // Œcie¿ka do katalogu z plikami XAML
+            string xamlDirectory = "C:\\Users\\fizyk\\source\\repos\\UdpClientMaui\\XamlFiles";
+            if (Directory.Exists(xamlDirectory))
+            {
+                var files = Directory.GetFiles(xamlDirectory, "*.xaml");
+                xamlFiles = new ObservableCollection<string>(files.Select(Path.GetFileName));
+                XamlFilesListView.ItemsSource = xamlFiles;
+            }
+            else
+            {
+                DisplayAlert("B³¹d", "Katalog z plikami XAML nie istnieje.", "OK");
+            }
+        }
+
+        private async void OnSendXamlClicked(object sender, EventArgs e)
+        {
+            // Poka¿ listê plików XAML do wyboru
+            XamlFilesListView.IsVisible = true;
+        }
+
+        private async void OnXamlFileSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            string selectedFile = e.SelectedItem as string;
+            if (selectedFile != null)
+            {
+                string filePath = Path.Combine("C:\\Users\\fizyk\\source\\repos\\UdpClientMaui\\XamlFiles", selectedFile);
+                await SendXamlFile(filePath);
+                XamlFilesListView.SelectedItem = null;
+                XamlFilesListView.IsVisible = false;
             }
         }
 
         public async Task SendXamlFile(string filePath)
         {
-            string serverAddress = "127.0.0.1"; // adres IP serwera
+            string serverAddress = "127.0.0.1";
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -154,20 +203,18 @@ namespace UdpClientMaui
 
                     await client.SendAsync(messageBytes, messageBytes.Length, serverAddress, serverPort);
 
-                    ResponseLabel.Text = "WysÅ‚ano plik XAML do serwera";
-                    Console.WriteLine("WysÅ‚ano plik XAML: " + messageJson);
+                    Console.WriteLine("Wys³ano plik XAML: " + messageJson);
                 }
                 catch (Exception ex)
                 {
-                    ResponseLabel.Text = "BÅ‚Ä…d: " + ex.Message;
-                    Console.WriteLine("BÅ‚Ä…d wysyÅ‚ania pliku XAML: " + ex.Message);
+                    Console.WriteLine("B³¹d wysy³ania pliku XAML: " + ex.Message);
                 }
             }
         }
 
         public async Task ShowDialog(string dialogMessage)
         {
-            string serverAddress = "127.0.0.1"; // adres IP serwera
+            string serverAddress = "127.0.0.1";
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -185,21 +232,18 @@ namespace UdpClientMaui
 
                     await client.SendAsync(messageBytes, messageBytes.Length, serverAddress, serverPort);
 
-                    ResponseLabel.Text = "WysÅ‚ano wiadomoÅ›Ä‡ ShowDialog do serwera";
-                    Console.WriteLine("WysÅ‚ano wiadomoÅ›Ä‡: " + messageJson);
+                    Console.WriteLine("Wys³ano wiadomoœæ: " + messageJson);
                 }
                 catch (Exception ex)
                 {
-                    ResponseLabel.Text = "BÅ‚Ä…d: " + ex.Message;
-
-                    Console.WriteLine("BÅ‚Ä…d wysyÅ‚ania wiadomoÅ›ci: " + ex.Message);
+                    Console.WriteLine("B³¹d wysy³ania wiadomoœci: " + ex.Message);
                 }
             }
         }
 
         public async Task ShowError(string errorMessage)
         {
-            string serverAddress = "127.0.0.1"; // adres IP serwera
+            string serverAddress = "127.0.0.1"; 
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -217,13 +261,40 @@ namespace UdpClientMaui
 
                     await client.SendAsync(messageBytes, messageBytes.Length, serverAddress, serverPort);
 
-                    ResponseLabel.Text = "WysÅ‚ano wiadomoÅ›Ä‡ ShowError do serwera";
-                    Console.WriteLine("WysÅ‚ano wiadomoÅ›Ä‡: " + messageJson);
+                    Console.WriteLine("Wys³ano wiadomoœæ: " + messageJson);
                 }
                 catch (Exception ex)
                 {
-                    ResponseLabel.Text = "BÅ‚Ä…d: " + ex.Message;
-                    Console.WriteLine("BÅ‚Ä…d wysyÅ‚ania wiadomoÅ›ci: " + ex.Message);
+                    Console.WriteLine("B³¹d wysy³ania wiadomoœci: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task SendOptionOneMessage()
+        {
+            string serverAddress = "127.0.0.1";
+            int serverPort = 11000;
+
+            using (UdpClient client = new UdpClient())
+            {
+                try
+                {
+                    var optionOneMessage = new Message
+                    {
+                        Command = "OptionOne",
+                        Data = "OpenProductListView"
+                    };
+
+                    string messageJson = JsonSerializer.Serialize(optionOneMessage);
+                    byte[] messageBytes = Encoding.ASCII.GetBytes(messageJson);
+
+                    await client.SendAsync(messageBytes, messageBytes.Length, serverAddress, serverPort);
+
+                    Console.WriteLine("Wys³ano wiadomoœæ: " + messageJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("B³¹d wysy³ania wiadomoœci: " + ex.Message);
                 }
             }
         }
@@ -233,7 +304,5 @@ namespace UdpClientMaui
             public string Command { get; set; }
             public object Data { get; set; }
         }
-
     }
-    
 }
