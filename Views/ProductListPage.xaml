@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UdpClientMaui.ProductListPage">
@@ -7,14 +8,15 @@
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Orientation="Horizontal">
-                            <Label Text="{Binding Name}" VerticalOptions="Center" />
-                            <Button Text="Potwierdzam"
-                                    CommandParameter="{Binding .}"
-                                    Clicked="OnConfirmClicked" />
+                            <Label Text="{Binding Name}" />
+                            <Label Text="{Binding SlotInfo}" />
+                            <Button Text="Skanuj" CommandParameter="{Binding .}" Clicked="OnScanClicked" />
+                            <Button Text="Potwierdź" CommandParameter="{Binding .}" Clicked="OnConfirmClicked" />
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Button Text="Pokaż wózek" Clicked="OnShowCartClicked" />
     </StackLayout>
 </ContentPage>

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,6 +14,7 @@ namespace UdpClientMaui
 {
     public partial class ScanListPage : ContentPage
     {
+        private ObservableCollection<Product> Products { get; set; }
         private ObservableCollection<string> xamlFiles;
         private UdpClient client;
         private IPEndPoint remoteEP;
@@ -25,7 +28,7 @@ namespace UdpClientMaui
 
         private void StartUdpListener()
         {
-            int port = 12001;
+            int port = 12001; 
             client = new UdpClient(new IPEndPoint(IPAddress.Any, port));
             client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
@@ -65,6 +68,9 @@ namespace UdpClientMaui
                             case "AllProductsConfirmed":
                                 Dispatcher.Dispatch(() => HandleAllProductsConfirmed());
                                 break;
+                            case "ProductsPlaced":
+                                Dispatcher.Dispatch(() => HandleProductsPlaced());
+                                break;
                             default:
                                 Console.WriteLine($"Nieznany komunikat: {message.Command}");
                                 break;
@@ -80,13 +86,19 @@ namespace UdpClientMaui
 
         private async void HandleAllProductsConfirmed()
         {
-            await Navigation.PushAsync(new ScanListPage()); 
+            await Navigation.PopAsync();
+        }
+
+        private async void HandleProductsPlaced()
+        {
+            await DisplayAlert("Potwierdzenie", "Magazynier potwierdzi³ umieszczenie produktów w wózku.", "OK");
+            // trzeba dodac jakas logike???
+
         }
 
         private async void OnOption1Clicked(object sender, EventArgs e)
         {
             await SendOptionOneMessage();
-
             await Navigation.PushAsync(new ProductListPage());
         }
 
@@ -121,7 +133,7 @@ namespace UdpClientMaui
 
         public async Task ShowHelloWorld()
         {
-            string serverAddress = "127.0.0.1"; 
+            string serverAddress = "127.0.0.1"; // adres IP serwera
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -150,8 +162,10 @@ namespace UdpClientMaui
 
         private void LoadXamlFiles()
         {
-            // Œcie¿ka do katalogu z plikami XAML
-            string xamlDirectory = "C:\\Users\\fizyk\\source\\repos\\UdpClientMaui\\XamlFiles";
+            string baseDirectory = AppContext.BaseDirectory; 
+            string xamlDirectory = Path.Combine(baseDirectory, "XamlFiles");
+
+
             if (Directory.Exists(xamlDirectory))
             {
                 var files = Directory.GetFiles(xamlDirectory, "*.xaml");
@@ -166,7 +180,6 @@ namespace UdpClientMaui
 
         private async void OnSendXamlClicked(object sender, EventArgs e)
         {
-            // Poka¿ listê plików XAML do wyboru
             XamlFilesListView.IsVisible = true;
         }
 
@@ -175,23 +188,47 @@ namespace UdpClientMaui
             string selectedFile = e.SelectedItem as string;
             if (selectedFile != null)
             {
-                string filePath = Path.Combine("C:\\Users\\fizyk\\source\\repos\\UdpClientMaui\\XamlFiles", selectedFile);
-                await SendXamlFile(filePath);
+                try
+                {
+                    string fileContent = ReadXamlFileContent(selectedFile);
+                    await SendXamlFileContent(fileContent);
+                }
+                catch (FileNotFoundException ex)
+                {
+                    await DisplayAlert("B³¹d", ex.Message, "OK");
+                }
+
                 XamlFilesListView.SelectedItem = null;
                 XamlFilesListView.IsVisible = false;
             }
         }
 
-        public async Task SendXamlFile(string filePath)
+        private string ReadXamlFileContent(string fileName)
         {
-            string serverAddress = "127.0.0.1";
+          
+            string baseDirectory = AppContext.BaseDirectory;
+            string xamlDirectory = Path.Combine(baseDirectory, "XamlFiles");
+            string filePath = Path.Combine(xamlDirectory, fileName);
+
+            if (File.Exists(filePath))
+            {
+                return File.ReadAllText(filePath);
+            }
+            else
+            {
+                throw new FileNotFoundException("Nie znaleziono pliku: " + fileName);
+            }
+        }
+
+        private async Task SendXamlFileContent(string fileContent)
+        {
+            string serverAddress = "127.0.0.1"; // adres IP serwera
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
             {
                 try
                 {
-                    string fileContent = File.ReadAllText(filePath);
                     var xamlMessage = new Message
                     {
                         Command = "SendXaml",
@@ -214,7 +251,7 @@ namespace UdpClientMaui
 
         public async Task ShowDialog(string dialogMessage)
         {
-            string serverAddress = "127.0.0.1";
+            string serverAddress = "127.0.0.1"; // adres IP serwera
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -243,7 +280,7 @@ namespace UdpClientMaui
 
         public async Task ShowError(string errorMessage)
         {
-            string serverAddress = "127.0.0.1"; 
+            string serverAddress = "127.0.0.1"; // adres IP serwera
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())
@@ -272,7 +309,7 @@ namespace UdpClientMaui
 
         public async Task SendOptionOneMessage()
         {
-            string serverAddress = "127.0.0.1";
+            string serverAddress = "127.0.0.1"; // adres IP serwera
             int serverPort = 11000;
 
             using (UdpClient client = new UdpClient())

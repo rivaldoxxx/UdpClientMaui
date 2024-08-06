@@ -32,6 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <MauiXaml Remove="XamlFiles\ExampleLayout.xaml" />
+    <MauiXaml Remove="XamlFiles\ExampleLayout2.xaml" />
+    <MauiXaml Remove="XamlFiles\ExampleLayout3.xaml" />
+    <MauiXaml Remove="XamlFiles\ExampleLayout4.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\ImagesXAML\produkt2.jpg" />
     <None Remove="Resources\ImagesXAML\produkt3.jpg" />
     <None Remove="Resources\ImagesXAML\produkt4.jpg" />
@@ -55,6 +62,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +78,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <MauiXaml Update="CartPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Layout1.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -88,21 +99,30 @@
     <MauiXaml Update="Views\SingleProductPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="XamlFiles\ExampleLayout3.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="XamlFiles\ExampleLayout4.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="XamlFiles\ExampleLayout2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="NewFolder1\" />
     <Folder Include="NewFolder2\" />
     <Folder Include="NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="XamlFiles\ExampleLayout.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XamlFiles\ExampleLayout2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XamlFiles\ExampleLayout3.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XamlFiles\ExampleLayout4.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

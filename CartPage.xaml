@@ -1,0 +1,17 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UdpClientMaui.CartPage">
+    <StackLayout>
+        <Label Text="Wózek" FontSize="Large" HorizontalOptions="Center" />
+        <CollectionView x:Name="CartCollectionView" ItemsSource="{Binding CartItems}" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Orientation="Horizontal" Padding="10">
+                        <Label Text="{Binding Slot}" FontSize="Medium" />
+                        <Label Text="{Binding ProductName}" FontSize="Medium" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>
